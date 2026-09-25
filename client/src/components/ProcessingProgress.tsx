@@ -25,7 +25,7 @@ export const ProcessingProgress: React.FC<ProcessingProgressProps> = ({
   onRetry,
   isFinished,
   hasError = false,
-  currentModel = 'gemini-3.8-flash',
+  currentModel = 'gemini-3.6-flash',
   onSelectModel,
 }) => {
   const [showLogs, setShowLogs] = useState(false);

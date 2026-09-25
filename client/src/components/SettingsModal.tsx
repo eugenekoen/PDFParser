@@ -14,7 +14,7 @@ import {
   Cpu,
 } from 'lucide-react';
 import type { AppSettings, GeminiModelInfo } from '../types';
-import { testGeminiConnection, fetchGeminiStatus, fetchGeminiModels } from '../services/api';
+import { testGeminiConnection } from '../services/api';
 import { getStoredApiKey } from '../services/crypto';
 
 export const POPULAR_GEMINI_MODELS: GeminiModelInfo[] = [
@@ -42,7 +42,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
   onSave,
 }) => {
   const [apiKey, setApiKey] = useState(settings.apiKey);
-  const [model, setModel] = useState(settings.model || 'gemini-3.8-flash');
+  const [model, setModel] = useState(settings.model || 'gemini-3.6-flash');
   const [availableModels, setAvailableModels] = useState<GeminiModelInfo[]>(POPULAR_GEMINI_MODELS);
   const [hasServerKey, setHasServerKey] = useState(false);
   const [isPassphraseUnlocked, setIsPassphraseUnlocked] = useState(false);
@@ -69,36 +69,17 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
     });
   };
 
-  // Synchronize unlocked key and auto-fetch models when opened
+  // Synchronize key/model from props when modal opens — NO API calls to save quota
   useEffect(() => {
     if (isOpen) {
       const storedKey = getStoredApiKey();
       const effectiveKey = settings.apiKey || storedKey || '';
       setApiKey(effectiveKey);
       setIsPassphraseUnlocked(Boolean(storedKey));
-      setModel(settings.model || 'gemini-3.8-flash');
+      setModel(settings.model || 'gemini-3.6-flash');
       setTestResult(null);
-
-      // Check server key status
-      fetchGeminiStatus()
-        .then((res) => {
-          setHasServerKey(res.hasServerKey);
-          if (res.models && res.models.length > 0) {
-            mergeModels(res.models);
-          }
-        })
-        .catch(() => {});
-
-      // If active key is available, query live models
-      if (effectiveKey) {
-        fetchGeminiModels(effectiveKey)
-          .then((res) => {
-            if (res.models && res.models.length > 0) {
-              mergeModels(res.models);
-            }
-          })
-          .catch(() => {});
-      }
+      // Models are populated from the static POPULAR_GEMINI_MODELS list.
+      // Live discovery only happens when user clicks "Test Model Connection".
     }
   }, [isOpen, settings.apiKey, settings.model]);
 
@@ -133,7 +114,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
     const finalKey = apiKey.trim();
     onSave({
       apiKey: finalKey,
-      model: model || 'gemini-3.8-flash',
+      model: model || 'gemini-3.6-flash',
     });
     onClose();
   };

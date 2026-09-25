@@ -54,7 +54,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             <Sparkles size={16} className="icon-cyan" />
             <span className="pill-host">Google Gemini</span>
             <span className="pill-divider">•</span>
-            <span className="pill-model">{settings.model || 'gemini-3.8-flash'}</span>
+            <span className="pill-model">{settings.model || 'gemini-3.6-flash'}</span>
             <span className="status-indicator">
               {isConnected ? <ShieldCheck size={16} /> : <AlertCircle size={16} />}
             </span>

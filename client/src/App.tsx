@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Navbar } from './components/Navbar';
 import { SettingsModal } from './components/SettingsModal';
 import { PassphraseModal } from './components/PassphraseModal';
@@ -8,8 +8,6 @@ import { TransactionTable } from './components/TransactionTable';
 import { CsvExportBar } from './components/CsvExportBar';
 import type { AppSettings, Transaction } from './types';
 import {
-  fetchGeminiStatus,
-  testGeminiConnection,
   extractTransactionsWithGeminiPdf,
 } from './services/api';
 import {
@@ -78,37 +76,14 @@ export const App: React.FC = () => {
   // Extracted transactions
   const [transactions, setTransactions] = useState<Transaction[]>([]);
 
-  // Auto-discover models and verify connection on mount or key change
-  useEffect(() => {
-    fetchGeminiStatus()
-      .then((status) => {
-        if (status.hasServerKey || settings.apiKey) {
-          setIsConnected(true);
-          if (status.hasServerKey) {
-            setIsUnlocked(true);
-          }
-          if (status.recommendedModel && settings.model !== status.recommendedModel) {
-            setSettings((prev) => ({
-              ...prev,
-              model: status.recommendedModel,
-            }));
-          }
-        } else {
-          setIsConnected(false);
-        }
-      })
-      .catch(() => {
-        if (settings.apiKey) {
-          testGeminiConnection(settings.apiKey, settings.model)
-            .then(() => {
-              setIsConnected(true);
-              setIsUnlocked(true);
-            })
-            .catch(() => setIsConnected(false));
-        } else {
-          setIsConnected(false);
-        }
-      });
+  // Determine connectivity from API key presence alone (no quota-burning API calls)
+  const updateConnectionStatus = (key: string) => {
+    setIsConnected(Boolean(key));
+  };
+
+  // Check on initial render
+  React.useEffect(() => {
+    updateConnectionStatus(settings.apiKey);
   }, [settings.apiKey]);
 
   const handleSaveSettings = (newSettings: AppSettings) => {
@@ -124,15 +99,13 @@ export const App: React.FC = () => {
 
   const handlePassphraseSuccess = (unlockedKey: string) => {
     setIsUnlocked(true);
+    setIsConnected(true);
     const updated = {
       ...settings,
       apiKey: unlockedKey,
     };
     setSettings(updated);
     localStorage.setItem('pdfparser_app_settings', JSON.stringify(updated));
-    testGeminiConnection(unlockedKey, settings.model)
-      .then(() => setIsConnected(true))
-      .catch(() => {});
   };
 
   const handleLockApp = () => {
@@ -156,7 +129,7 @@ export const App: React.FC = () => {
     setActiveFile(file);
     setIsProcessing(true);
     setTransactions([]);
-    const activeModel = modelOverride || settings.model || 'gemini-3.8-flash';
+    const activeModel = modelOverride || settings.model || 'gemini-3.6-flash';
     if (modelOverride && modelOverride !== settings.model) {
       handleModelSelect(modelOverride);
     }
@@ -260,7 +233,7 @@ export const App: React.FC = () => {
           <div className="hero-banner">
             <h2 className="hero-title">Bank Statement to 5-Column CSV (ZAR)</h2>
             <p className="hero-desc">
-              Powered by Google Gemini ({settings.model || 'gemini-3.8-flash'}) with 1,000,000+ token context and native visual OCR.
+              Powered by Google Gemini ({settings.model || 'gemini-3.6-flash'}) with 1,000,000+ token context and native visual OCR.
             </p>
           </div>
 
@@ -270,7 +243,7 @@ export const App: React.FC = () => {
               <Cpu size={18} className="icon-cyan" />
               <span style={{ fontSize: '0.9rem', color: '#94a3b8', fontWeight: 500 }}>Active Model:</span>
               <select
-                value={settings.model || 'gemini-3.8-flash'}
+                value={settings.model || 'gemini-3.6-flash'}
                 onChange={(e) => handleModelSelect(e.target.value)}
                 style={{
                   padding: '0.4rem 0.75rem',
@@ -334,7 +307,7 @@ export const App: React.FC = () => {
                 className="btn btn-secondary btn-sm"
                 onClick={() => handleExtractFile(activeFile)}
               >
-                <Sparkles size={14} /> Re-Extract with {settings.model || 'gemini-3.8-flash'}
+                <Sparkles size={14} /> Re-Extract with {settings.model || 'gemini-3.6-flash'}
               </button>
             </div>
           )}
@@ -351,7 +324,7 @@ export const App: React.FC = () => {
               onRetry={activeFile ? () => handleExtractFile(activeFile) : undefined}
               isFinished={processingState.isFinished}
               hasError={processingState.logs.some((l) => l.status === 'error')}
-              currentModel={settings.model || 'gemini-3.8-flash'}
+              currentModel={settings.model || 'gemini-3.6-flash'}
               onSelectModel={handleModelSelect}
             />
           )}

@@ -17,7 +17,7 @@ geminiRouter.get('/status', async (_req: Request, res: Response): Promise<void> 
     res.json({
       hasServerKey: false,
       models: [],
-      recommendedModel: 'gemini-3.8-flash',
+      recommendedModel: 'gemini-3.6-flash',
     });
     return;
   }
@@ -29,7 +29,7 @@ geminiRouter.get('/status', async (_req: Request, res: Response): Promise<void> 
     res.json({
       hasServerKey: true,
       models: [],
-      recommendedModel: 'gemini-3.8-flash',
+      recommendedModel: 'gemini-3.6-flash',
       error: err.message,
     });
   }
@@ -74,7 +74,7 @@ geminiRouter.post(
       }
 
       const apiKey = (req.headers['x-gemini-api-key'] as string) || req.body.apiKey;
-      const model = req.body.model || 'gemini-3.8-flash';
+      const model = req.body.model || 'gemini-3.6-flash';
 
       let parsedPdf: any = null;
       try {
@@ -115,7 +115,7 @@ geminiRouter.post('/extract-text', async (req: Request, res: Response): Promise<
     const result = await GeminiService.extractFromText(
       text,
       apiKey,
-      model || 'gemini-3.8-flash'
+      model || 'gemini-3.6-flash'
     );
     res.json({
       transactions: result.transactions,

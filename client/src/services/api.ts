@@ -34,12 +34,12 @@ export async function fetchGeminiStatus(): Promise<{
   try {
     const res = await fetch('/api/gemini/status');
     if (!res.ok) {
-      return { hasServerKey: false, models: [], recommendedModel: 'gemini-3.8-flash' };
+      return { hasServerKey: false, models: [], recommendedModel: 'gemini-3.6-flash' };
     }
     return await res.json();
   } catch {
     // If running statically on GitHub Pages without backend
-    return { hasServerKey: false, models: [], recommendedModel: 'gemini-3.8-flash' };
+    return { hasServerKey: false, models: [], recommendedModel: 'gemini-3.6-flash' };
   }
 }
 
@@ -78,11 +78,11 @@ export async function fetchGeminiModels(apiKey?: string): Promise<{
           id: m.name.replace(/^models\//, ''),
           name: m.displayName || m.name,
         }));
-      return { models, recommendedModel: 'gemini-3.8-flash', hasServerKey: false };
+      return { models, recommendedModel: 'gemini-3.6-flash', hasServerKey: false };
     }
   }
 
-  return { models: [], recommendedModel: 'gemini-3.8-flash', hasServerKey: false };
+  return { models: [], recommendedModel: 'gemini-3.6-flash', hasServerKey: false };
 }
 
 /**
@@ -114,7 +114,7 @@ export async function extractTransactionsWithGeminiPdf(
   rawModelResponse?: string;
   modelUsed?: string;
 }> {
-  const model = settings.model || 'gemini-3.8-flash';
+  const model = settings.model || 'gemini-3.6-flash';
 
   // 1. First try Backend
   try {
@@ -310,7 +310,7 @@ export async function extractTransactionsWithGeminiText(
     headers,
     body: JSON.stringify({
       text,
-      model: settings.model || 'gemini-3.8-flash',
+      model: settings.model || 'gemini-3.6-flash',
       apiKey: settings.apiKey,
     }),
   });
@@ -324,7 +324,8 @@ export async function extractTransactionsWithGeminiText(
 }
 
 /**
- * Test Gemini API connection & discover available models
+ * Test Gemini API connection — client-direct only, single lightweight call.
+ * Does NOT list models (saves quota). Uses the selected model for a minimal ping.
  */
 export async function testGeminiConnection(
   apiKey?: string,
@@ -336,60 +337,35 @@ export async function testGeminiConnection(
   usingServerKey: boolean;
   error?: string;
 }> {
-  try {
-    const res = await fetch('/api/gemini/test', {
+  if (!apiKey) {
+    throw new Error('API key is required to test the connection.');
+  }
+
+  const targetModel = model || 'gemini-3.6-flash';
+
+  const res = await fetch(
+    `https://generativelanguage.googleapis.com/v1beta/models/${targetModel}:generateContent?key=${apiKey}`,
+    {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ apiKey, model }),
-    });
+      body: JSON.stringify({
+        contents: [{ parts: [{ text: 'Reply with exactly: {"status":"ok"}' }] }],
+        generationConfig: { response_mime_type: 'application/json', maxOutputTokens: 10 },
+      }),
+    }
+  );
 
-    if (res.ok) {
-      return await res.json();
-    }
-    const errData = await res.json().catch(() => null);
-    if (errData && errData.error) {
-      throw new Error(errData.error);
-    }
-  } catch (err: any) {
-    if (err.message && !err.message.includes('Failed to fetch')) {
-      throw err;
-    }
+  const data = await res.json();
+  if (data.error) {
+    throw new Error(data.error.message || 'Gemini API connection failed');
   }
 
-  // Fallback for static hosting
-  if (apiKey) {
-    const directRes = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/${model || 'gemini-3.8-flash'}:generateContent?key=${apiKey}`,
-      {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          contents: [{ parts: [{ text: 'Ping test. Reply with JSON: {"status": "ok"}' }] }],
-          generationConfig: { response_mime_type: 'application/json' },
-        }),
-      }
-    );
-    const data = await directRes.json();
-    if (data.error) {
-      throw new Error(data.error.message || 'Direct Gemini API connection failed');
-    }
-    let discoveredModels: GeminiModelInfo[] = [];
-    try {
-      const modelsRes = await fetchGeminiModels(apiKey);
-      discoveredModels = modelsRes.models;
-    } catch {
-      // Ignore if list query fails
-    }
-
-    return {
-      status: 'connected',
-      model: model || 'gemini-3.8-flash',
-      models: discoveredModels,
-      usingServerKey: false,
-    };
-  }
-
-  throw new Error('API key is required.');
+  return {
+    status: 'connected',
+    model: targetModel,
+    models: [], // Don't burn quota listing models
+    usingServerKey: false,
+  };
 }
 
 export function formatCsvLocally(transactions: Transaction[]): string {

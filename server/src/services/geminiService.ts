@@ -78,7 +78,7 @@ export class GeminiService {
         recommended = models[0].id;
       }
       if (!recommended) {
-        recommended = 'gemini-3.8-flash';
+        recommended = 'gemini-3.6-flash';
       }
 
       return {
@@ -139,7 +139,7 @@ export class GeminiService {
 
     let primaryModel = modelName;
     if (!primaryModel || primaryModel.includes('2.5-flash') && !primaryModel.includes('lite')) {
-      primaryModel = 'gemini-3.8-flash';
+      primaryModel = 'gemini-3.6-flash';
     }
 
     // Models to try in sequence if a model experiences 503 high demand spikes
@@ -246,7 +246,7 @@ Example JSON output:
 
     let primaryModel = modelName;
     if (!primaryModel || primaryModel.includes('2.5-flash') && !primaryModel.includes('lite')) {
-      primaryModel = 'gemini-3.8-flash';
+      primaryModel = 'gemini-3.6-flash';
     }
 
     const candidateModels = Array.from(new Set([
