@@ -158,47 +158,98 @@ export async function extractTransactionsWithGeminiPdf(
   const base64Data = await fileToBase64(file);
   const systemPrompt = `You are a financial statement parser engine. Extract every transaction row from the bank statement PDF into a clean JSON array with keys: "date" (YYYY-MM-DD), "description" (merchant/narrative), "debit" (positive number or null for money leaving), "credit" (positive number or null for money entering), "balance" (number or null). Return ONLY valid JSON array.`;
 
-  const directRes = await fetch(
-    `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${settings.apiKey}`,
-    {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        contents: [
-          {
-            parts: [
-              {
-                inline_data: {
-                  mime_type: 'application/pdf',
-                  data: base64Data,
-                },
-              },
-              { text: systemPrompt },
-            ],
-          },
-        ],
-        generationConfig: {
-          response_mime_type: 'application/json',
-          temperature: 0.1,
-        },
-      }),
-    }
-  );
+  const candidateModels = Array.from(new Set([
+    model,
+    'gemini-3.8-flash',
+    'gemini-3.7-flash',
+    'gemini-3.6-flash',
+    'gemini-3.5-flash',
+    'gemini-flash-latest',
+    'gemini-2.5-flash-lite',
+    'gemini-3.8-pro',
+  ]));
 
-  const data = await directRes.json();
-  if (data.error) {
-    throw new Error(data.error.message || 'Gemini API call failed');
+  let lastError: any = null;
+
+  for (const candidate of candidateModels) {
+    try {
+      const directRes = await fetch(
+        `https://generativelanguage.googleapis.com/v1beta/models/${candidate}:generateContent?key=${settings.apiKey}`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            contents: [
+              {
+                parts: [
+                  {
+                    inline_data: {
+                      mime_type: 'application/pdf',
+                      data: base64Data,
+                    },
+                  },
+                  { text: systemPrompt },
+                ],
+              },
+            ],
+            generationConfig: {
+              response_mime_type: 'application/json',
+              temperature: 0.1,
+            },
+          }),
+        }
+      );
+
+      const data = await directRes.json();
+      if (data.error) {
+        const errorMsg = data.error.message || JSON.stringify(data.error);
+        const isHighDemand =
+          errorMsg.includes('high demand') ||
+          errorMsg.includes('503') ||
+          errorMsg.includes('UNAVAILABLE') ||
+          errorMsg.includes('RESOURCE_EXHAUSTED') ||
+          errorMsg.includes('rate limit') ||
+          errorMsg.includes('429');
+
+        if (isHighDemand) {
+          console.warn(`Model ${candidate} is unavailable or high demand. Trying next model...`);
+          lastError = new Error(errorMsg);
+          continue;
+        }
+        throw new Error(errorMsg);
+      }
+
+      const rawText = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+      const transactions = parseClientJson(rawText);
+
+      return {
+        filename: file.name,
+        transactions,
+        rawModelResponse: rawText,
+        modelUsed: candidate,
+      };
+    } catch (err: any) {
+      lastError = err;
+      const msg = String(err.message || '');
+      const isHighDemand =
+        msg.includes('high demand') ||
+        msg.includes('503') ||
+        msg.includes('UNAVAILABLE') ||
+        msg.includes('RESOURCE_EXHAUSTED') ||
+        msg.includes('rate limit') ||
+        msg.includes('429');
+
+      if (isHighDemand) {
+        console.warn(`Client direct model ${candidate} failed due to demand. Falling back...`);
+        continue;
+      }
+      throw err;
+    }
   }
 
-  const rawText = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
-  const transactions = parseClientJson(rawText);
-
-  return {
-    filename: file.name,
-    transactions,
-    rawModelResponse: rawText,
-    modelUsed: model,
-  };
+  throw new Error(
+    `All attempted Gemini models are currently experiencing high demand. Please select another model in settings or click Retry Extraction. (Details: ${lastError?.message || lastError})`
+  );
 }
 
 function parseClientJson(raw: string): Transaction[] {
@@ -324,10 +375,18 @@ export async function testGeminiConnection(
     if (data.error) {
       throw new Error(data.error.message || 'Direct Gemini API connection failed');
     }
+    let discoveredModels: GeminiModelInfo[] = [];
+    try {
+      const modelsRes = await fetchGeminiModels(apiKey);
+      discoveredModels = modelsRes.models;
+    } catch {
+      // Ignore if list query fails
+    }
+
     return {
       status: 'connected',
       model: model || 'gemini-3.8-flash',
-      models: [],
+      models: discoveredModels,
       usingServerKey: false,
     };
   }

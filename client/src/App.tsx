@@ -17,7 +17,7 @@ import {
   getStoredApiKey,
   clearUnlockedApiKey,
 } from './services/crypto';
-import { Sparkles, FileText, KeyRound } from 'lucide-react';
+import { Sparkles, FileText, KeyRound, Cpu } from 'lucide-react';
 
 const DEFAULT_SETTINGS: AppSettings = {
   apiKey: (import.meta.env.VITE_GEMINI_API_KEY as string) || getStoredApiKey() || '',
@@ -116,12 +116,20 @@ export const App: React.FC = () => {
     localStorage.setItem('pdfparser_app_settings', JSON.stringify(newSettings));
   };
 
+  const handleModelSelect = (newModel: string) => {
+    const updated = { ...settings, model: newModel };
+    setSettings(updated);
+    localStorage.setItem('pdfparser_app_settings', JSON.stringify(updated));
+  };
+
   const handlePassphraseSuccess = (unlockedKey: string) => {
     setIsUnlocked(true);
-    setSettings((prev) => ({
-      ...prev,
+    const updated = {
+      ...settings,
       apiKey: unlockedKey,
-    }));
+    };
+    setSettings(updated);
+    localStorage.setItem('pdfparser_app_settings', JSON.stringify(updated));
     testGeminiConnection(unlockedKey, settings.model)
       .then(() => setIsConnected(true))
       .catch(() => {});
@@ -138,7 +146,7 @@ export const App: React.FC = () => {
   };
 
   // Direct Extraction from File
-  const handleExtractFile = async (file: File) => {
+  const handleExtractFile = async (file: File, modelOverride?: string) => {
     // If locked and encrypted payload exists, prompt for passphrase
     if (!isConnected && hasEncrypted && !isUnlocked) {
       setIsPassphraseOpen(true);
@@ -148,7 +156,10 @@ export const App: React.FC = () => {
     setActiveFile(file);
     setIsProcessing(true);
     setTransactions([]);
-    const activeModel = settings.model || 'gemini-3.8-flash';
+    const activeModel = modelOverride || settings.model || 'gemini-3.8-flash';
+    if (modelOverride && modelOverride !== settings.model) {
+      handleModelSelect(modelOverride);
+    }
 
     setProcessingState({
       currentPage: 1,
@@ -165,7 +176,11 @@ export const App: React.FC = () => {
     });
 
     try {
-      const res = await extractTransactionsWithGeminiPdf(file, settings);
+      const effectiveSettings: AppSettings = {
+        ...settings,
+        model: activeModel,
+      };
+      const res = await extractTransactionsWithGeminiPdf(file, effectiveSettings);
       setTransactions(res.transactions);
 
       setProcessingState({
@@ -249,6 +264,46 @@ export const App: React.FC = () => {
             </p>
           </div>
 
+          {/* Quick Model Selector & Status Bar */}
+          <div className="active-model-bar" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.75rem', marginBottom: '1.25rem', padding: '0.75rem 1.25rem', background: '#1e293b', border: '1px solid #334155', borderRadius: '10px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', flexWrap: 'wrap' }}>
+              <Cpu size={18} className="icon-cyan" />
+              <span style={{ fontSize: '0.9rem', color: '#94a3b8', fontWeight: 500 }}>Active Model:</span>
+              <select
+                value={settings.model || 'gemini-3.8-flash'}
+                onChange={(e) => handleModelSelect(e.target.value)}
+                style={{
+                  padding: '0.4rem 0.75rem',
+                  borderRadius: '6px',
+                  background: '#0f172a',
+                  color: '#38bdf8',
+                  border: '1px solid rgba(56, 189, 248, 0.4)',
+                  fontWeight: 600,
+                  fontSize: '0.88rem',
+                  cursor: 'pointer',
+                }}
+                title="Select Gemini model to parse bank statements"
+              >
+                <option value="gemini-3.8-flash">gemini-3.8-flash (Latest, Recommended)</option>
+                <option value="gemini-3.7-flash">gemini-3.7-flash (High Stability)</option>
+                <option value="gemini-3.6-flash">gemini-3.6-flash</option>
+                <option value="gemini-3.5-flash">gemini-3.5-flash</option>
+                <option value="gemini-flash-latest">gemini-flash-latest</option>
+                <option value="gemini-2.5-flash-lite">gemini-2.5-flash-lite (Low Demand Queue)</option>
+                <option value="gemini-3.8-pro">gemini-3.8-pro (Pro Intelligence)</option>
+                <option value="gemini-2.5-pro">gemini-2.5-pro</option>
+              </select>
+            </div>
+            <button
+              type="button"
+              className="btn btn-secondary btn-sm"
+              onClick={() => setIsSettingsOpen(true)}
+              style={{ fontSize: '0.82rem' }}
+            >
+              <Sparkles size={14} className="icon-cyan" /> Settings & API Key
+            </button>
+          </div>
+
           {/* Passphrase Reminder if locked */}
           {!isConnected && hasEncrypted && !isUnlocked && (
             <div className="locked-banner" onClick={() => setIsPassphraseOpen(true)}>
@@ -279,7 +334,7 @@ export const App: React.FC = () => {
                 className="btn btn-secondary btn-sm"
                 onClick={() => handleExtractFile(activeFile)}
               >
-                <Sparkles size={14} /> Re-Extract Statement
+                <Sparkles size={14} /> Re-Extract with {settings.model || 'gemini-3.8-flash'}
               </button>
             </div>
           )}
@@ -296,6 +351,8 @@ export const App: React.FC = () => {
               onRetry={activeFile ? () => handleExtractFile(activeFile) : undefined}
               isFinished={processingState.isFinished}
               hasError={processingState.logs.some((l) => l.status === 'error')}
+              currentModel={settings.model || 'gemini-3.8-flash'}
+              onSelectModel={handleModelSelect}
             />
           )}
 

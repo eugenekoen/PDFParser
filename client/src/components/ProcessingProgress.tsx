@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Loader2, StopCircle, Terminal, ChevronDown, ChevronUp, CheckCircle, AlertCircle, RefreshCw } from 'lucide-react';
+import { Loader2, StopCircle, Terminal, ChevronDown, ChevronUp, CheckCircle, AlertCircle, RefreshCw, Cpu } from 'lucide-react';
 
 interface ProcessingProgressProps {
   currentPage: number;
@@ -11,6 +11,8 @@ interface ProcessingProgressProps {
   onRetry?: () => void;
   isFinished: boolean;
   hasError?: boolean;
+  currentModel?: string;
+  onSelectModel?: (model: string) => void;
 }
 
 export const ProcessingProgress: React.FC<ProcessingProgressProps> = ({
@@ -23,6 +25,8 @@ export const ProcessingProgress: React.FC<ProcessingProgressProps> = ({
   onRetry,
   isFinished,
   hasError = false,
+  currentModel = 'gemini-3.8-flash',
+  onSelectModel,
 }) => {
   const [showLogs, setShowLogs] = useState(false);
   const percent = totalPages > 0 ? Math.round((currentPage / totalPages) * 100) : 0;
@@ -40,7 +44,7 @@ export const ProcessingProgress: React.FC<ProcessingProgressProps> = ({
           )}
           <div>
             <h3 className="progress-title">
-              {hasError ? 'Extraction Interrupted' : isFinished ? 'Extraction Complete!' : 'Processing with Google Gemini...'}
+              {hasError ? 'Extraction Interrupted (High Demand Spike)' : isFinished ? 'Extraction Complete!' : 'Processing with Google Gemini...'}
             </h3>
             <p className="progress-subtitle">{currentStatusText}</p>
           </div>
@@ -72,8 +76,52 @@ export const ProcessingProgress: React.FC<ProcessingProgressProps> = ({
       )}
 
       {hasError ? (
-        <div className="demand-retry-notice">
-          <span>⚠️ If the model is experiencing high demand, clicking <strong>Retry Extraction</strong> will automatically attempt fallback models.</span>
+        <div className="demand-retry-notice" style={{ marginTop: '0.75rem', padding: '0.85rem 1rem', borderRadius: '8px', background: 'rgba(239, 68, 68, 0.08)', border: '1px solid rgba(239, 68, 68, 0.25)' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.75rem', width: '100%' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', flexWrap: 'wrap' }}>
+              <span style={{ fontSize: '0.88rem', color: '#fca5a5', fontWeight: 500 }}>
+                ⚠️ High traffic queue detected on {currentModel}. Switch model to bypass:
+              </span>
+              {onSelectModel && (
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                  <Cpu size={15} className="icon-cyan" />
+                  <select
+                    value={currentModel}
+                    onChange={(e) => onSelectModel(e.target.value)}
+                    style={{
+                      padding: '0.35rem 0.65rem',
+                      borderRadius: '6px',
+                      background: '#0f172a',
+                      color: '#38bdf8',
+                      border: '1px solid #38bdf8',
+                      fontWeight: 600,
+                      fontSize: '0.85rem',
+                      cursor: 'pointer',
+                    }}
+                  >
+                    <option value="gemini-3.8-flash">gemini-3.8-flash (Latest)</option>
+                    <option value="gemini-3.7-flash">gemini-3.7-flash (High Stability)</option>
+                    <option value="gemini-3.6-flash">gemini-3.6-flash</option>
+                    <option value="gemini-3.5-flash">gemini-3.5-flash</option>
+                    <option value="gemini-flash-latest">gemini-flash-latest</option>
+                    <option value="gemini-2.5-flash-lite">gemini-2.5-flash-lite (Low Traffic)</option>
+                    <option value="gemini-3.8-pro">gemini-3.8-pro (Pro)</option>
+                  </select>
+                </div>
+              )}
+            </div>
+
+            {onRetry && (
+              <button
+                type="button"
+                className="btn btn-primary btn-sm"
+                onClick={onRetry}
+                style={{ marginLeft: 'auto' }}
+              >
+                <RefreshCw size={14} /> Retry with {currentModel}
+              </button>
+            )}
+          </div>
         </div>
       ) : (
         <div className="progress-stats">

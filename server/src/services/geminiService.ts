@@ -147,10 +147,13 @@ export class GeminiService {
     // Models to try in sequence if a model experiences 503 high demand spikes
     const candidateModels = Array.from(new Set([
       primaryModel,
+      'gemini-3.8-flash',
       'gemini-3.7-flash',
-      'gemini-flash-latest',
+      'gemini-3.6-flash',
       'gemini-3.5-flash',
+      'gemini-flash-latest',
       'gemini-2.5-flash-lite',
+      'gemini-3.8-pro',
     ]));
 
     const systemPrompt = `You are a financial statement parser engine. Your task is to extract every transaction from the provided bank statement PDF into a clean JSON array.
@@ -208,20 +211,29 @@ Example JSON output:
         return { transactions, rawResponse: rawText, modelUsed: model };
       } catch (err: any) {
         lastError = err;
-        const msg = String(err.message || '');
-        const isHighDemand = msg.includes('high demand') || msg.includes('503') || err.status === 503;
+        const msg = String(err.message || '') + ' ' + (typeof err === 'object' ? JSON.stringify(err) : '');
+        const isHighDemand =
+          msg.includes('high demand') ||
+          msg.includes('503') ||
+          msg.includes('UNAVAILABLE') ||
+          msg.includes('RESOURCE_EXHAUSTED') ||
+          msg.includes('rate limit') ||
+          msg.includes('429') ||
+          err.status === 503 ||
+          err.status === 429;
+
         if (isHighDemand) {
-          console.warn(`Model ${model} is experiencing high demand. Automatically trying next fallback model...`);
+          console.warn(`Model ${model} is experiencing high demand / unavailable. Automatically trying next fallback model...`);
           continue; // Try next candidate model
         } else {
           // Non-demand error (e.g. invalid key or unparseable), rethrow
-          throw new Error(`Gemini PDF extraction error on ${model}: ${msg}`);
+          throw new Error(`Gemini PDF extraction error on ${model}: ${err.message || msg}`);
         }
       }
     }
 
     throw new Error(
-      `All Gemini Flash models are currently experiencing high demand. Please click "Retry Extraction" in a few moments. (Details: ${lastError?.message || lastError})`
+      `All attempted Gemini models are currently experiencing high demand. Please select a different model in Settings or click Retry Extraction. (Details: ${lastError?.message || lastError})`
     );
   }
 
