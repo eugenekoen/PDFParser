@@ -15,7 +15,7 @@ A fullstack web application designed to convert bank statement PDFs of any layou
 2. **Zero-Leak Company Passphrase Unlock**:
    - The raw API key is **NEVER exposed publicly** or stored as plaintext in the static build.
    - The API key is encrypted using **AES-256-GCM** with 100,000 rounds of PBKDF2.
-   - Company staff unlock the app on any device simply by typing the passphrase: **`Khfs-server1`**.
+   - Company staff unlock the app on any device simply by typing the secret company passphrase.
 
 3. **South African Rand (ZAR) & Format**:
    - All amounts displayed as **`R ###,###,###.##`** (e.g. `R 1,250.50`, `R 184,320.00`).
@@ -56,7 +56,7 @@ In your repository on GitHub:
    - Value: `your_actual_gemini_api_key_here`
 3. Click **New repository secret**:
    - Name: `APP_PASSPHRASE`
-   - Value: `Khfs-server1`
+   - Value: `your_secret_passphrase_here`
 
 During deployment, GitHub Actions will use the passphrase to **AES-256-GCM encrypt** the API key so that the plaintext key is **never baked into the public bundle**.
 
@@ -76,5 +76,5 @@ git push origin main
 ### Step 4: How Staff Use the App Anywhere
 1. Staff members open the GitHub Pages URL on any computer.
 2. Click **Unlock App** (or the prompt banner).
-3. Type the company passphrase: **`Khfs-server1`**.
+3. Type the company passphrase you set in GitHub secrets.
 4. The browser locally decrypts the key into memory. Staff never have to copy, paste, or remember the complex Gemini API key!

@@ -39,7 +39,7 @@ jobs:
           node scripts/encrypt-key.mjs
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-          APP_PASSPHRASE: ${{ secrets.APP_PASSPHRASE || 'Khfs-server1' }}
+          APP_PASSPHRASE: ${{ secrets.APP_PASSPHRASE }}
 
       - name: Build Static Client
         run: |

@@ -255,7 +255,7 @@ export const App: React.FC = () => {
               <KeyRound size={20} className="icon-cyan" />
               <div className="locked-banner-text">
                 <strong>Company Access Locked:</strong>
-                <span>Click here to enter the passphrase (<code>Khfs-server1</code>) and unlock Gemini AI on this device.</span>
+                <span>Click here to enter the company passphrase and unlock Gemini AI on this device.</span>
               </div>
             </div>
           )}

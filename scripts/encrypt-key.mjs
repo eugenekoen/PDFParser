@@ -7,21 +7,21 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // Helper to parse key from .env file directly without external dependencies
-function readEnvKey(filePath) {
+function readEnvVal(filePath, keyName) {
   if (!fs.existsSync(filePath)) return '';
   const content = fs.readFileSync(filePath, 'utf8');
   for (const line of content.split('\n')) {
     const trimmed = line.trim();
-    if (trimmed.startsWith('GEMINI_API_KEY=')) {
-      return trimmed.substring('GEMINI_API_KEY='.length).trim().replace(/^["']|["']$/g, '');
+    if (trimmed.startsWith(`${keyName}=`)) {
+      return trimmed.substring(`${keyName}=`.length).trim().replace(/^["']|["']$/g, '');
     }
   }
   return '';
 }
 
-const envServerKey = readEnvKey(path.resolve(__dirname, '../server/.env'));
-const apiKey = (process.env.GEMINI_API_KEY || envServerKey || '').trim();
-const passphrase = (process.env.APP_PASSPHRASE || 'Khfs-server1').trim();
+const envFile = path.resolve(__dirname, '../server/.env');
+const apiKey = (process.env.GEMINI_API_KEY || readEnvVal(envFile, 'GEMINI_API_KEY') || '').trim();
+const passphrase = (process.env.APP_PASSPHRASE || readEnvVal(envFile, 'APP_PASSPHRASE') || '').trim();
 
 const targetPath = path.resolve(__dirname, '../client/src/encryptedConfig.json');
 
@@ -29,6 +29,11 @@ if (!apiKey) {
   console.log('[encrypt-key] No GEMINI_API_KEY found. Writing placeholder.');
   fs.writeFileSync(targetPath, JSON.stringify({ isConfigured: false }, null, 2));
   process.exit(0);
+}
+
+if (!passphrase) {
+  console.error('[encrypt-key] Error: APP_PASSPHRASE environment variable or server/.env setting is required to encrypt the key.');
+  process.exit(1);
 }
 
 // Encrypt apiKey with AES-256-GCM derived from passphrase
