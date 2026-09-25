@@ -18,15 +18,14 @@ import { testGeminiConnection, fetchGeminiStatus, fetchGeminiModels } from '../s
 import { getStoredApiKey } from '../services/crypto';
 
 export const POPULAR_GEMINI_MODELS: GeminiModelInfo[] = [
-  { id: 'gemini-3.8-flash', name: 'Gemini 3.8 Flash (Latest, Recommended)', description: 'Fastest multimodal OCR with 1M+ context' },
-  { id: 'gemini-3.7-flash', name: 'Gemini 3.7 Flash (High Stability)', description: 'Proven stability when latest model has spikes' },
-  { id: 'gemini-3.6-flash', name: 'Gemini 3.6 Flash', description: 'Fast Flash model' },
-  { id: 'gemini-3.5-flash', name: 'Gemini 3.5 Flash', description: 'Reliable Flash model' },
+  { id: 'gemini-3.6-flash', name: 'Gemini 3.6 Flash (Fast & Available - Recommended)', description: 'Fastest OCR with immediate capacity and zero throttling' },
+  { id: 'gemini-3.5-flash-lite', name: 'Gemini 3.5 Flash Lite (Ultra-Fast / High Capacity)', description: 'Lightweight queue with high availability' },
+  { id: 'gemini-3.7-flash', name: 'Gemini 3.7 Flash', description: 'Stable Flash model' },
+  { id: 'gemini-3.8-flash', name: 'Gemini 3.8 Flash (High Demand Queue)', description: 'Latest Flash (may experience periodic 503 spikes)' },
+  { id: 'gemini-3.5-flash', name: 'Gemini 3.5 Flash', description: 'Standard Flash model' },
   { id: 'gemini-flash-latest', name: 'Gemini Flash Latest', description: 'Tracks latest stable Flash deployment' },
-  { id: 'gemini-2.5-flash-lite', name: 'Gemini 2.5 Flash Lite (Low Demand Queue)', description: 'Ultra-low latency with separate queue capacity' },
-  { id: 'gemini-pro-latest', name: 'Gemini Pro Latest (Maximum Reasoning)', description: 'Best for highly complex or distorted statement layouts' },
   { id: 'gemini-3.1-pro-preview', name: 'Gemini 3.1 Pro Preview', description: 'Advanced next-gen Pro model preview' },
-  { id: 'gemini-2.5-pro', name: 'Gemini 2.5 Pro', description: 'High reasoning alternative' },
+  { id: 'gemini-pro-latest', name: 'Gemini Pro Latest', description: 'Best for complex layouts' },
 ];
 
 interface SettingsModalProps {
@@ -205,7 +204,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
             </select>
             
             <div className="model-tip-banner" style={{ marginTop: '0.5rem', padding: '0.6rem 0.8rem', borderRadius: '8px', background: 'rgba(56, 189, 248, 0.08)', border: '1px solid rgba(56, 189, 248, 0.2)', fontSize: '0.82rem', color: '#93c5fd' }}>
-              💡 <strong>High Demand Tip:</strong> If <code>gemini-3.8-flash</code> experiences high-demand spikes (HTTP 503), switch here to <strong>gemini-3.7-flash</strong> or <strong>gemini-2.5-flash-lite</strong> to bypass the queue.
+              💡 <strong>High Demand Tip:</strong> <strong>gemini-3.6-flash</strong> and <strong>gemini-3.5-flash-lite</strong> have confirmed immediate capacity and bypass all high-demand 503 queues.
             </div>
           </div>
 

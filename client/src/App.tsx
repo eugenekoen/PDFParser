@@ -21,7 +21,7 @@ import { Sparkles, FileText, KeyRound, Cpu } from 'lucide-react';
 
 const DEFAULT_SETTINGS: AppSettings = {
   apiKey: (import.meta.env.VITE_GEMINI_API_KEY as string) || getStoredApiKey() || '',
-  model: 'gemini-3.8-flash',
+  model: 'gemini-3.6-flash',
 };
 
 export const App: React.FC = () => {
@@ -33,9 +33,9 @@ export const App: React.FC = () => {
         const parsed = JSON.parse(saved);
         if (parsed && typeof parsed === 'object') {
           const key = parsed.apiKey || getStoredApiKey() || (import.meta.env.VITE_GEMINI_API_KEY as string) || '';
-          let model = parsed.model || 'gemini-3.8-flash';
-          if (model.includes('2.5-flash') && !model.includes('lite')) {
-            model = 'gemini-3.8-flash';
+          let model = parsed.model || 'gemini-3.6-flash';
+          if (model.includes('2.5') || model === 'gemini-3.8-flash') {
+            model = 'gemini-3.6-flash';
           }
           return { apiKey: key, model };
         }
@@ -284,15 +284,14 @@ export const App: React.FC = () => {
                 }}
                 title="Select Gemini model to parse bank statements"
               >
-                <option value="gemini-3.8-flash">gemini-3.8-flash (Latest, Recommended)</option>
-                <option value="gemini-3.7-flash">gemini-3.7-flash (High Stability)</option>
-                <option value="gemini-3.6-flash">gemini-3.6-flash</option>
+                <option value="gemini-3.6-flash">gemini-3.6-flash (Fast & Immediate Capacity - Recommended)</option>
+                <option value="gemini-3.5-flash-lite">gemini-3.5-flash-lite (Ultra Fast / Low Traffic)</option>
+                <option value="gemini-3.7-flash">gemini-3.7-flash</option>
+                <option value="gemini-3.8-flash">gemini-3.8-flash (High Demand Queue)</option>
                 <option value="gemini-3.5-flash">gemini-3.5-flash</option>
                 <option value="gemini-flash-latest">gemini-flash-latest</option>
-                <option value="gemini-2.5-flash-lite">gemini-2.5-flash-lite (Low Demand Queue)</option>
-                <option value="gemini-pro-latest">gemini-pro-latest (Pro Intelligence)</option>
                 <option value="gemini-3.1-pro-preview">gemini-3.1-pro-preview</option>
-                <option value="gemini-2.5-pro">gemini-2.5-pro</option>
+                <option value="gemini-pro-latest">gemini-pro-latest</option>
               </select>
             </div>
             <button

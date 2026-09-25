@@ -59,14 +59,12 @@ export class GeminiService {
       }
 
       const priorities = [
-        'gemini-3.8-flash',
+        'gemini-3.6-flash',
+        'gemini-3.5-flash-lite',
         'gemini-3.7-flash',
-        'gemini-3.5-flash',
+        'gemini-3.8-flash',
         'gemini-flash-latest',
-        'gemini-3-flash-preview',
-        'gemini-2.5-flash-lite',
-        'gemini-2.0-flash',
-        'gemini-1.5-flash',
+        'gemini-3.5-flash',
       ];
 
       let recommended: string | undefined;
@@ -147,14 +145,11 @@ export class GeminiService {
     // Models to try in sequence if a model experiences 503 high demand spikes
     const candidateModels = Array.from(new Set([
       primaryModel,
-      'gemini-3.8-flash',
-      'gemini-3.7-flash',
       'gemini-3.6-flash',
-      'gemini-3.5-flash',
+      'gemini-3.5-flash-lite',
+      'gemini-3.7-flash',
+      'gemini-3.8-flash',
       'gemini-flash-latest',
-      'gemini-2.5-flash-lite',
-      'gemini-pro-latest',
-      'gemini-2.5-pro',
     ]));
 
     const systemPrompt = `You are a financial statement parser engine. Your task is to extract every transaction from the provided bank statement PDF into a clean JSON array.
