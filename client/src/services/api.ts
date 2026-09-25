@@ -166,7 +166,8 @@ export async function extractTransactionsWithGeminiPdf(
     'gemini-3.5-flash',
     'gemini-flash-latest',
     'gemini-2.5-flash-lite',
-    'gemini-3.8-pro',
+    'gemini-pro-latest',
+    'gemini-2.5-pro',
   ]));
 
   let lastError: any = null;

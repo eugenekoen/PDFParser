@@ -153,7 +153,8 @@ export class GeminiService {
       'gemini-3.5-flash',
       'gemini-flash-latest',
       'gemini-2.5-flash-lite',
-      'gemini-3.8-pro',
+      'gemini-pro-latest',
+      'gemini-2.5-pro',
     ]));
 
     const systemPrompt = `You are a financial statement parser engine. Your task is to extract every transaction from the provided bank statement PDF into a clean JSON array.

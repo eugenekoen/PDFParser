@@ -24,7 +24,8 @@ export const POPULAR_GEMINI_MODELS: GeminiModelInfo[] = [
   { id: 'gemini-3.5-flash', name: 'Gemini 3.5 Flash', description: 'Reliable Flash model' },
   { id: 'gemini-flash-latest', name: 'Gemini Flash Latest', description: 'Tracks latest stable Flash deployment' },
   { id: 'gemini-2.5-flash-lite', name: 'Gemini 2.5 Flash Lite (Low Demand Queue)', description: 'Ultra-low latency with separate queue capacity' },
-  { id: 'gemini-3.8-pro', name: 'Gemini 3.8 Pro (Maximum Intelligence)', description: 'Best for highly complex or distorted statement layouts' },
+  { id: 'gemini-pro-latest', name: 'Gemini Pro Latest (Maximum Reasoning)', description: 'Best for highly complex or distorted statement layouts' },
+  { id: 'gemini-3.1-pro-preview', name: 'Gemini 3.1 Pro Preview', description: 'Advanced next-gen Pro model preview' },
   { id: 'gemini-2.5-pro', name: 'Gemini 2.5 Pro', description: 'High reasoning alternative' },
 ];
 

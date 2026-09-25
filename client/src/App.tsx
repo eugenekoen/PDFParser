@@ -290,7 +290,8 @@ export const App: React.FC = () => {
                 <option value="gemini-3.5-flash">gemini-3.5-flash</option>
                 <option value="gemini-flash-latest">gemini-flash-latest</option>
                 <option value="gemini-2.5-flash-lite">gemini-2.5-flash-lite (Low Demand Queue)</option>
-                <option value="gemini-3.8-pro">gemini-3.8-pro (Pro Intelligence)</option>
+                <option value="gemini-pro-latest">gemini-pro-latest (Pro Intelligence)</option>
+                <option value="gemini-3.1-pro-preview">gemini-3.1-pro-preview</option>
                 <option value="gemini-2.5-pro">gemini-2.5-pro</option>
               </select>
             </div>
