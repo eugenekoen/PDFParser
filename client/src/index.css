@@ -1404,7 +1404,519 @@ body {
   max-width: 400px;
 }
 
+/* Nav actions container */
+.nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
 
+/* ================================================================
+   MOBILE RESPONSIVE STYLES
+   ================================================================ */
 
+/* Tablet and below */
+@media (max-width: 768px) {
+  /* Layout */
+  .main-content {
+    padding: 1.25rem 0.75rem 3rem;
+  }
 
+  .container {
+    gap: 1.25rem;
+  }
+
+  /* Navbar - stack vertically */
+  .nav-container {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+  }
+
+  .nav-actions {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .brand-title {
+    font-size: 1rem;
+  }
+
+  .brand-subtitle {
+    font-size: 0.68rem;
+  }
+
+  .brand-icon {
+    width: 34px;
+    height: 34px;
+  }
+
+  /* Connection pill - compact */
+  .connection-pill {
+    font-size: 0.72rem;
+    padding: 0.3rem 0.65rem;
+    gap: 0.35rem;
+  }
+
+  .pill-host {
+    display: none;
+  }
+
+  .pill-divider {
+    display: none;
+  }
+
+  /* Hero */
+  .hero-banner {
+    padding: 0.75rem 0.5rem 0.25rem;
+  }
+
+  .hero-title {
+    font-size: 1.35rem;
+  }
+
+  .hero-desc {
+    font-size: 0.82rem;
+  }
+
+  /* Cards */
+  .card {
+    padding: 1rem;
+    border-radius: var(--radius-lg);
+    gap: 1rem;
+  }
+
+  .card-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+
+  .card-header-actions {
+    width: 100%;
+  }
+
+  .card-header-actions .btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .card-title {
+    font-size: 1rem;
+  }
+
+  /* Active Model Bar */
+  .active-model-bar {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 0.6rem !important;
+    padding: 0.65rem 1rem !important;
+  }
+
+  .active-model-bar select {
+    width: 100%;
+    font-size: 0.82rem !important;
+  }
+
+  .active-model-bar .btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  /* Dropzone */
+  .dropzone {
+    padding: 2rem 1rem;
+  }
+
+  .icon-circle {
+    width: 56px;
+    height: 56px;
+  }
+
+  .dropzone-title {
+    font-size: 1rem;
+  }
+
+  .upload-tips {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .file-badge {
+    flex-direction: column;
+    text-align: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1rem;
+  }
+
+  /* KPI Grid - 2 columns on tablet */
+  .kpi-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.6rem;
+  }
+
+  .kpi-card {
+    padding: 0.75rem;
+    gap: 0.6rem;
+  }
+
+  .kpi-icon-wrap {
+    width: 36px;
+    height: 36px;
+  }
+
+  .kpi-value {
+    font-size: 1rem;
+  }
+
+  .kpi-label {
+    font-size: 0.68rem;
+  }
+
+  /* Table */
+  .table-filter-bar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .search-input-wrap {
+    width: 100%;
+  }
+
+  .filter-count {
+    text-align: center;
+  }
+
+  .statement-table th {
+    padding: 0.6rem 0.5rem;
+    font-size: 0.68rem;
+  }
+
+  .statement-table td {
+    padding: 0.3rem 0.35rem;
+  }
+
+  .cell-input {
+    font-size: 0.78rem;
+    padding: 0.3rem 0.35rem;
+  }
+
+  /* Progress Card */
+  .progress-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+
+  .progress-actions {
+    width: 100%;
+  }
+
+  .progress-actions .btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .progress-title {
+    font-size: 0.92rem;
+  }
+
+  .progress-stats {
+    flex-direction: column;
+    gap: 0.25rem;
+    text-align: center;
+  }
+
+  .demand-retry-notice > div {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+  }
+
+  .demand-retry-notice select {
+    width: 100%;
+  }
+
+  .demand-retry-notice .btn {
+    width: 100%;
+    justify-content: center;
+    margin-left: 0 !important;
+  }
+
+  /* Export */
+  .export-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .export-actions-row {
+    width: 100%;
+    flex-direction: column;
+  }
+
+  .export-actions-row .btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .csv-spec-pill {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  /* File reprocess bar */
+  .file-reprocess-bar {
+    flex-direction: column;
+    align-items: stretch;
+    padding: 0.65rem 1rem;
+  }
+
+  .file-reprocess-bar .btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .file-info-badge {
+    font-size: 0.78rem;
+    flex-wrap: wrap;
+  }
+
+  /* Modal */
+  .modal-card {
+    max-width: 100%;
+    max-height: 90vh;
+    overflow-y: auto;
+    border-radius: var(--radius-lg);
+  }
+
+  .modal-header {
+    padding: 1rem;
+  }
+
+  .modal-body {
+    padding: 1rem;
+  }
+
+  .modal-footer {
+    padding: 0.85rem 1rem;
+    flex-direction: column;
+  }
+
+  .modal-footer .btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .modal-title h3 {
+    font-size: 0.95rem;
+  }
+
+  /* Safety callout */
+  .safety-callout {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  /* Locked banner */
+  .locked-banner {
+    flex-direction: column;
+    text-align: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1rem;
+  }
+
+  .locked-banner-text {
+    align-items: center;
+    text-align: center;
+  }
+
+  /* Info boxes */
+  .info-box {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .server-key-badge {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  /* Quick Gemini card */
+  .quick-gemini-card {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+    padding: 1rem;
+  }
+
+  .quick-gemini-card .btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  /* Stats row */
+  .stats-row {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  /* Logs */
+  .logs-content {
+    max-height: 180px;
+  }
+
+  .log-line {
+    flex-wrap: wrap;
+  }
+
+  /* Inspector footer */
+  .inspector-footer {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.6rem;
+  }
+
+  .footer-buttons {
+    flex-direction: column;
+  }
+
+  .footer-buttons .btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  /* Model tip banner in settings */
+  .model-tip-banner {
+    font-size: 0.75rem !important;
+  }
+}
+
+/* Small phones */
+@media (max-width: 480px) {
+  .main-content {
+    padding: 1rem 0.5rem 2.5rem;
+  }
+
+  .nav-container {
+    padding: 0.65rem 0.75rem;
+  }
+
+  .brand {
+    gap: 0.5rem;
+  }
+
+  .brand-title {
+    font-size: 0.92rem;
+  }
+
+  .brand-icon {
+    width: 30px;
+    height: 30px;
+  }
+
+  /* Hero */
+  .hero-title {
+    font-size: 1.15rem;
+  }
+
+  .hero-desc {
+    font-size: 0.75rem;
+  }
+
+  /* KPI - single column */
+  .kpi-grid {
+    grid-template-columns: 1fr;
+  }
+
+  /* Cards */
+  .card {
+    padding: 0.85rem;
+    border-radius: var(--radius-md);
+  }
+
+  /* Dropzone */
+  .dropzone {
+    padding: 1.5rem 0.75rem;
+  }
+
+  .icon-circle {
+    width: 48px;
+    height: 48px;
+  }
+
+  .dropzone-title {
+    font-size: 0.92rem;
+  }
+
+  .dropzone-desc {
+    font-size: 0.78rem;
+  }
+
+  /* Table cells tighter */
+  .statement-table th {
+    padding: 0.5rem 0.35rem;
+    font-size: 0.65rem;
+  }
+
+  .statement-table td {
+    padding: 0.25rem 0.25rem;
+  }
+
+  .cell-input {
+    font-size: 0.72rem;
+    padding: 0.25rem 0.25rem;
+  }
+
+  .cell-index {
+    font-size: 0.68rem;
+  }
+
+  /* Buttons */
+  .btn {
+    font-size: 0.82rem;
+    padding: 0.55rem 0.85rem;
+  }
+
+  .btn-sm {
+    font-size: 0.75rem;
+    padding: 0.35rem 0.65rem;
+  }
+
+  /* Modal */
+  .modal-backdrop {
+    padding: 0.5rem;
+    align-items: flex-end;
+  }
+
+  .modal-card {
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+    max-height: 92vh;
+  }
+
+  /* Stats row - single column */
+  .stats-row {
+    grid-template-columns: 1fr;
+  }
+
+  /* CSV preview */
+  .csv-preview-text {
+    font-size: 0.72rem;
+    max-height: 150px;
+  }
+
+  /* Connection pill even more compact */
+  .connection-pill {
+    font-size: 0.68rem;
+    padding: 0.25rem 0.5rem;
+  }
+
+  /* Progress title */
+  .progress-title {
+    font-size: 0.85rem;
+  }
+
+  .progress-subtitle {
+    font-size: 0.72rem;
+  }
+}
 

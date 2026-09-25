@@ -285,12 +285,30 @@ function parseClientJson(raw: string): Transaction[] {
 
   return items.map((item, idx) => ({
     id: `tx_${Date.now()}_${idx + 1}`,
-    date: String(item.date || '').trim(),
+    date: formatDateToDMY(String(item.date || '').trim()),
     description: String(item.description || item.payee || item.details || '').trim(),
     debit: item.debit !== undefined && item.debit !== null ? parseFloat(item.debit) : null,
     credit: item.credit !== undefined && item.credit !== null ? parseFloat(item.credit) : null,
     balance: item.balance !== undefined && item.balance !== null ? parseFloat(item.balance) : null,
   }));
+}
+
+/**
+ * Convert YYYY-MM-DD or similar date strings to dd/mm/yyyy
+ */
+function formatDateToDMY(dateStr: string): string {
+  // Handle YYYY-MM-DD
+  const isoMatch = dateStr.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  if (isoMatch) {
+    return `${isoMatch[3]}/${isoMatch[2]}/${isoMatch[1]}`;
+  }
+  // Handle YYYY/MM/DD
+  const slashMatch = dateStr.match(/^(\d{4})\/(\d{2})\/(\d{2})$/);
+  if (slashMatch) {
+    return `${slashMatch[3]}/${slashMatch[2]}/${slashMatch[1]}`;
+  }
+  // Already dd/mm/yyyy or other format — return as-is
+  return dateStr;
 }
 
 /**

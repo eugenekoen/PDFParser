@@ -226,7 +226,7 @@ export const TransactionTable: React.FC<TransactionTableProps> = ({
                       className="cell-input date-input"
                       value={tx.date}
                       onChange={(e) => onUpdateTransaction(tx.id, 'date', e.target.value)}
-                      placeholder="YYYY-MM-DD"
+                      placeholder="dd/mm/yyyy"
                     />
                   </td>
                   <td>

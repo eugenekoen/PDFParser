@@ -370,9 +370,22 @@ ${text}
         }
       }
 
+      const rawDate = String(item.date || '').trim();
+      // Convert YYYY-MM-DD to dd/mm/yyyy
+      let formattedDate = rawDate;
+      const isoMatch = rawDate.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+      if (isoMatch) {
+        formattedDate = `${isoMatch[3]}/${isoMatch[2]}/${isoMatch[1]}`;
+      } else {
+        const slashMatch = rawDate.match(/^(\d{4})\/(\d{2})\/(\d{2})$/);
+        if (slashMatch) {
+          formattedDate = `${slashMatch[3]}/${slashMatch[2]}/${slashMatch[1]}`;
+        }
+      }
+
       return {
         id: `tx_${Date.now()}_${idx + 1}_${Math.random().toString(36).substring(2, 6)}`,
-        date: String(item.date || '').trim(),
+        date: formattedDate,
         description: String(item.description || item.payee || item.details || '').trim(),
         debit,
         credit,

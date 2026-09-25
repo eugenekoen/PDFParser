@@ -207,7 +207,7 @@ export const App: React.FC = () => {
   const handleAddTransaction = () => {
     const newTx: Transaction = {
       id: `manual_${Date.now()}`,
-      date: new Date().toISOString().split('T')[0],
+      date: (() => { const d = new Date(); return `${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}/${d.getFullYear()}`; })(),
       description: 'New Transaction',
       debit: null,
       credit: null,
