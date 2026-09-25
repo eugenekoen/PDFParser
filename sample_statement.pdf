@@ -1,0 +1,72 @@
+%PDF-1.4
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [3 0 R 4 0 R] /Count 2 >>
+endobj
+3 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Contents 5 0 R /Resources << /Font << /F1 7 0 R >> >> >>
+endobj
+4 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Contents 6 0 R /Resources << /Font << /F1 7 0 R >> >> >>
+endobj
+5 0 obj
+<< /Length 816 >>
+stream
+BT
+/F1 11 Tf
+14 TL
+50 750 Td
+(ACME NATIONAL BANK - MONTHLY STATEMENT) '
+(Account Holder: John Doe   Account No: 9876-5432-10) '
+(Statement Period: 2024-01-01 to 2024-01-31) '
+() '
+(Date         Description                    Debit       Credit      Balance) '
+(2024-01-02   OPENING BALANCE                                       5420.00) '
+(2024-01-05   TECH CORP PAYROLL SALARY                   3500.00    8920.00) '
+(2024-01-08   SUPERMARKET FRESH FOODS        142.50                 8777.50) '
+(2024-01-12   ELECTRIC & GAS UTILITY          85.20                 8692.30) '
+(2024-01-15   TRANSFER TO SAVINGS           1000.00                 7692.30) '
+(2024-01-18   ONLINE RETAIL PURCHASE          64.99                 7627.31) '
+(2024-01-22   COFFEE SHOP DOWNTOWN             4.75                 7622.56) '
+ET
+endstream
+endobj
+6 0 obj
+<< /Length 573 >>
+stream
+BT
+/F1 11 Tf
+14 TL
+50 750 Td
+(ACME NATIONAL BANK - STATEMENT CONTINUED \(PAGE 2\)) '
+(Date         Description                    Debit       Credit      Balance) '
+(2024-01-25   CLIENT INVOICE PAYMENT                     1200.00    8822.56) '
+(2024-01-28   PHARMACY HEALTH CARE            32.10                 8790.46) '
+(2024-01-30   MONTHLY SERVICE CHARGE           5.00                 8785.46) '
+() '
+(CLOSING BALANCE AS OF 2024-01-31: $8,785.46) '
+(Total Debits: $1,334.54   Total Credits: $4,700.00) '
+(Important Notice: Review this statement within 30 days.) '
+ET
+endstream
+endobj
+7 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+xref
+0 8
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000121 00000 n 
+0000000247 00000 n 
+0000000373 00000 n 
+0000001239 00000 n 
+0000001862 00000 n 
+trailer
+<< /Size 8 /Root 1 0 R >>
+startxref
+1932
+%%EOF
