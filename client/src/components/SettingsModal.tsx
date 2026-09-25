@@ -44,7 +44,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
   const [apiKey, setApiKey] = useState(settings.apiKey);
   const [model, setModel] = useState(settings.model || 'gemini-3.6-flash');
   const [availableModels, setAvailableModels] = useState<GeminiModelInfo[]>(POPULAR_GEMINI_MODELS);
-  const [hasServerKey, setHasServerKey] = useState(false);
+  const [hasServerKey] = useState(false);
   const [isPassphraseUnlocked, setIsPassphraseUnlocked] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
