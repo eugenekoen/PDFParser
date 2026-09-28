@@ -173,9 +173,6 @@ export const TransactionTable: React.FC<TransactionTableProps> = ({
           </div>
           <div>
             <h2 className="card-title">Extracted Transactions Review & Edit</h2>
-            <p className="card-subtitle">
-              Amounts displayed in South African Rand (R) formatted as ###,###,###.##
-            </p>
           </div>
         </div>
 
