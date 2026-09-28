@@ -207,7 +207,7 @@ export const App: React.FC = () => {
   const handleAddTransaction = () => {
     const newTx: Transaction = {
       id: `manual_${Date.now()}`,
-      date: (() => { const d = new Date(); return `${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}/${d.getFullYear()}`; })(),
+      date: (() => { const d = new Date(); return `${String(d.getDate()).padStart(2, '0')}/${String(d.getMonth() + 1).padStart(2, '0')}/${d.getFullYear()}`; })(),
       description: 'New Transaction',
       debit: null,
       credit: null,
@@ -231,10 +231,9 @@ export const App: React.FC = () => {
         <div className="container">
           {/* Hero Instructions */}
           <div className="hero-banner">
-            <h2 className="hero-title">Bank Statement to 5-Column CSV (ZAR)</h2>
+            <h2 className="hero-title">PDF Bank Statement to CSV Converter</h2>
             <p className="hero-desc">
-              Powered by Google Gemini ({settings.model || 'gemini-3.6-flash'}) with 1,000,000+ token context and native visual OCR.
-            </p>
+              Powered by Google Gemini</p>
           </div>
 
           {/* Quick Model Selector & Status Bar */}
@@ -267,14 +266,6 @@ export const App: React.FC = () => {
                 <option value="gemini-pro-latest">gemini-pro-latest</option>
               </select>
             </div>
-            <button
-              type="button"
-              className="btn btn-secondary btn-sm"
-              onClick={() => setIsSettingsOpen(true)}
-              style={{ fontSize: '0.82rem' }}
-            >
-              <Sparkles size={14} className="icon-cyan" /> Settings & API Key
-            </button>
           </div>
 
           {/* Passphrase Reminder if locked */}

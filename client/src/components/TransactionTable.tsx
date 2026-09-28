@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import {
   Table,
   Plus,
@@ -8,6 +8,8 @@ import {
   TrendingUp,
   Scale,
   Hash,
+  ChevronDown,
+  ChevronUp,
 } from 'lucide-react';
 import type { Transaction } from '../types';
 
@@ -28,6 +30,50 @@ export const formatAmountDisplay = (val: number | null | undefined): string => {
   return (val < 0 ? '-' : '') + parts.join('.');
 };
 
+interface TextCellProps {
+  value: string;
+  onChange: (newVal: string) => void;
+  className?: string;
+  placeholder?: string;
+}
+
+const TextCell: React.FC<TextCellProps> = ({ value, onChange, className = '', placeholder = '' }) => {
+  const [localText, setLocalText] = useState(value);
+  const [isFocused, setIsFocused] = useState(false);
+
+  useEffect(() => {
+    if (!isFocused) {
+      setLocalText(value);
+    }
+  }, [value, isFocused]);
+
+  const handleBlur = () => {
+    setIsFocused(false);
+    if (localText !== value) {
+      onChange(localText);
+    }
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      (e.target as HTMLInputElement).blur();
+    }
+  };
+
+  return (
+    <input
+      type="text"
+      className={`cell-input ${className}`}
+      value={localText}
+      onFocus={() => setIsFocused(true)}
+      onBlur={handleBlur}
+      onChange={(e) => setLocalText(e.target.value)}
+      onKeyDown={handleKeyDown}
+      placeholder={placeholder}
+    />
+  );
+};
+
 interface AmountCellProps {
   value: number | null;
   onChange: (newVal: number | null) => void;
@@ -39,6 +85,12 @@ const AmountCell: React.FC<AmountCellProps> = ({ value, onChange, className = ''
   const [isFocused, setIsFocused] = useState(false);
   const [localText, setLocalText] = useState(value !== null && value !== undefined ? value.toString() : '');
 
+  useEffect(() => {
+    if (!isFocused) {
+      setLocalText(value !== null && value !== undefined ? value.toString() : '');
+    }
+  }, [value, isFocused]);
+
   const handleFocus = () => {
     setIsFocused(true);
     setLocalText(value !== null && value !== undefined ? value.toString() : '');
@@ -48,23 +100,21 @@ const AmountCell: React.FC<AmountCellProps> = ({ value, onChange, className = ''
     setIsFocused(false);
     const clean = localText.replace(/[^0-9.-]/g, '');
     if (clean === '' || clean === '-') {
-      onChange(null);
+      if (value !== null) onChange(null);
     } else {
       const num = parseFloat(clean);
-      onChange(isNaN(num) ? null : Math.round(num * 100) / 100);
+      const rounded = isNaN(num) ? null : Math.round(num * 100) / 100;
+      if (rounded !== value) onChange(rounded);
     }
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setLocalText(e.target.value);
-    const clean = e.target.value.replace(/[^0-9.-]/g, '');
-    if (clean === '' || clean === '-') {
-      onChange(null);
-    } else {
-      const num = parseFloat(clean);
-      if (!isNaN(num)) {
-        onChange(num);
-      }
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      (e.target as HTMLInputElement).blur();
     }
   };
 
@@ -76,6 +126,7 @@ const AmountCell: React.FC<AmountCellProps> = ({ value, onChange, className = ''
       onFocus={handleFocus}
       onBlur={handleBlur}
       onChange={handleChange}
+      onKeyDown={handleKeyDown}
       placeholder={placeholder}
     />
   );
@@ -88,22 +139,30 @@ export const TransactionTable: React.FC<TransactionTableProps> = ({
   onAddTransaction,
 }) => {
   const [searchTerm, setSearchTerm] = useState('');
+  const [isExpanded, setIsExpanded] = useState(false);
+  const INITIAL_LIMIT = 15;
 
-  // Calculate summary metrics
-  const totalDebit = transactions.reduce((acc, t) => acc + (t.debit || 0), 0);
-  const totalCredit = transactions.reduce((acc, t) => acc + (t.credit || 0), 0);
+  // Memoize summary metrics to avoid recalculation on unrelated re-renders
+  const totalDebit = useMemo(() => transactions.reduce((acc, t) => acc + (t.debit || 0), 0), [transactions]);
+  const totalCredit = useMemo(() => transactions.reduce((acc, t) => acc + (t.credit || 0), 0), [transactions]);
   const netMovement = totalCredit - totalDebit;
 
-  const filteredTransactions = transactions.filter((t) => {
-    if (!searchTerm) return true;
+  const filteredTransactions = useMemo(() => {
+    if (!searchTerm.trim()) return transactions;
     const term = searchTerm.toLowerCase();
-    return (
+    return transactions.filter((t) =>
       t.description.toLowerCase().includes(term) ||
       t.date.toLowerCase().includes(term) ||
       (t.debit && t.debit.toString().includes(term)) ||
       (t.credit && t.credit.toString().includes(term))
     );
-  });
+  }, [transactions, searchTerm]);
+
+  const displayedTransactions = useMemo(() => {
+    return isExpanded
+      ? filteredTransactions
+      : filteredTransactions.slice(0, INITIAL_LIMIT);
+  }, [filteredTransactions, isExpanded]);
 
   return (
     <div className="card transaction-card">
@@ -189,7 +248,15 @@ export const TransactionTable: React.FC<TransactionTableProps> = ({
           />
         </div>
         <div className="filter-count">
-          Showing {filteredTransactions.length} of {transactions.length} transactions
+          {filteredTransactions.length > INITIAL_LIMIT && !isExpanded ? (
+            <>
+              Showing <strong>{displayedTransactions.length}</strong> of <strong>{filteredTransactions.length}</strong> transactions
+            </>
+          ) : (
+            <>
+              Showing <strong>{filteredTransactions.length}</strong> of <strong>{transactions.length}</strong> transactions
+            </>
+          )}
         </div>
       </div>
 
@@ -217,24 +284,22 @@ export const TransactionTable: React.FC<TransactionTableProps> = ({
                 </td>
               </tr>
             ) : (
-              filteredTransactions.map((tx, idx) => (
+              displayedTransactions.map((tx, idx) => (
                 <tr key={tx.id}>
                   <td className="cell-index">{idx + 1}</td>
                   <td>
-                    <input
-                      type="text"
-                      className="cell-input date-input"
+                    <TextCell
                       value={tx.date}
-                      onChange={(e) => onUpdateTransaction(tx.id, 'date', e.target.value)}
+                      onChange={(newVal) => onUpdateTransaction(tx.id, 'date', newVal)}
+                      className="date-input"
                       placeholder="dd/mm/yyyy"
                     />
                   </td>
                   <td>
-                    <input
-                      type="text"
-                      className="cell-input desc-input"
+                    <TextCell
                       value={tx.description}
-                      onChange={(e) => onUpdateTransaction(tx.id, 'description', e.target.value)}
+                      onChange={(newVal) => onUpdateTransaction(tx.id, 'description', newVal)}
+                      className="desc-input"
                       placeholder="Transaction Description"
                     />
                   </td>
@@ -278,6 +343,29 @@ export const TransactionTable: React.FC<TransactionTableProps> = ({
           </tbody>
         </table>
       </div>
+
+      {/* Expand / Collapse Button if more than 15 rows */}
+      {filteredTransactions.length > INITIAL_LIMIT && (
+        <div className="table-expand-wrapper">
+          <button
+            type="button"
+            className="btn-table-expand"
+            onClick={() => setIsExpanded((prev) => !prev)}
+          >
+            {isExpanded ? (
+              <>
+                <ChevronUp size={16} />
+                <span>Show Less (First {INITIAL_LIMIT})</span>
+              </>
+            ) : (
+              <>
+                <ChevronDown size={16} />
+                <span>Show All {filteredTransactions.length} Transactions ({filteredTransactions.length - INITIAL_LIMIT} more)</span>
+              </>
+            )}
+          </button>
+        </div>
+      )}
     </div>
   );
 };

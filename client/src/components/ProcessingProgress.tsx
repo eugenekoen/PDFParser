@@ -18,7 +18,7 @@ interface ProcessingProgressProps {
 export const ProcessingProgress: React.FC<ProcessingProgressProps> = ({
   currentPage,
   totalPages,
-  transactionsCount,
+  transactionsCount: _transactionsCount,
   currentStatusText,
   logs,
   onAbort,
@@ -125,8 +125,6 @@ export const ProcessingProgress: React.FC<ProcessingProgressProps> = ({
         </div>
       ) : (
         <div className="progress-stats">
-          <span>Progress: {currentPage} / {totalPages} pages ({percent}%)</span>
-          <span className="highlight-emerald">Transactions Extracted: {transactionsCount}</span>
         </div>
       )}
 

@@ -138,7 +138,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
             <div className="server-key-badge" style={{ borderColor: 'rgba(52, 211, 153, 0.4)', background: 'rgba(16, 185, 129, 0.1)' }}>
               <ShieldCheck size={18} className="icon-emerald" />
               <div>
-                <strong>Company Access Passphrase Unlocked:</strong>
+                <strong>Company Access Unlocked:</strong>
                 <span>The decrypted Gemini API key is active in your browser memory and loaded below.</span>
               </div>
             </div>
@@ -183,7 +183,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                 </option>
               ))}
             </select>
-            
+
             <div className="model-tip-banner" style={{ marginTop: '0.5rem', padding: '0.6rem 0.8rem', borderRadius: '8px', background: 'rgba(56, 189, 248, 0.08)', border: '1px solid rgba(56, 189, 248, 0.2)', fontSize: '0.82rem', color: '#93c5fd' }}>
               💡 <strong>High Demand Tip:</strong> <strong>gemini-3.6-flash</strong> and <strong>gemini-3.5-flash-lite</strong> have confirmed immediate capacity and bypass all high-demand 503 queues.
             </div>
@@ -233,8 +233,8 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
               </button>
             </div>
             <span className="form-hint">
-              {isPassphraseUnlocked 
-                ? 'Key automatically populated from your passphrase unlock. You can edit or change it if needed.' 
+              {isPassphraseUnlocked
+                ? 'Key automatically populated from your passphrase unlock. You can edit or change it if needed.'
                 : 'Leave blank to use server .env key, or paste your key here.'}
             </span>
           </div>

@@ -95,11 +95,6 @@ export const FileUpload: React.FC<FileUploadProps> = ({
             <p className="dropzone-desc">
               Drag & drop any bank statement PDF here, or <span className="highlight-text">browse files</span>
             </p>
-            <div className="upload-tips">
-              <span className="tip-tag">Universal Bank Formats</span>
-              <span className="tip-tag">Multi-Page Safe</span>
-              <span className="tip-tag">Raw Preview First</span>
-            </div>
           </div>
         )}
       </div>

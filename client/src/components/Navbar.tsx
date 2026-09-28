@@ -28,9 +28,6 @@ export const Navbar: React.FC<NavbarProps> = ({
           </div>
           <div>
             <h1 className="brand-title">Bank Statement Parser</h1>
-            <p className="brand-subtitle">
-              Google Gemini 1M+ Context & Native Multimodal OCR
-            </p>
           </div>
         </div>
 

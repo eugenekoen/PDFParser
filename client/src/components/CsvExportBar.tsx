@@ -45,7 +45,7 @@ export const CsvExportBar: React.FC<CsvExportBarProps> = ({ transactions, filena
             <FileSpreadsheet size={20} />
           </div>
           <div>
-            <h3 className="card-title">3. Export Clean 5-Column CSV</h3>
+            <h3 className="card-title">3. Export CSV</h3>
             <p className="card-subtitle">
               Ready for immediate import into your processing application
             </p>

@@ -50,7 +50,7 @@ export const PassphraseModal: React.FC<PassphraseModalProps> = ({
         <div className="modal-header">
           <div className="modal-title">
             <KeyRound size={20} className="icon-cyan" />
-            <h3>Company Access Passphrase</h3>
+            <h3>Company Access</h3>
           </div>
           <button className="close-btn" onClick={onClose}>
             <X size={18} />
@@ -83,7 +83,7 @@ export const PassphraseModal: React.FC<PassphraseModalProps> = ({
                 <div>
                   <strong>Zero-Leak Passphrase Protection:</strong>
                   <p>
-                    Enter the company passphrase to decrypt the Gemini API key locally in your browser memory.
+                    Enter the company passphrase to decrypt the Gemini API key locally in your browser memory. Please do not share this API Key to anyone outside the organisation!
                   </p>
                 </div>
               </div>
